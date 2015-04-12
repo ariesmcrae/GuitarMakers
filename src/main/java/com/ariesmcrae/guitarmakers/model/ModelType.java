@@ -10,8 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="MODELTYPE")
 public class ModelType {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

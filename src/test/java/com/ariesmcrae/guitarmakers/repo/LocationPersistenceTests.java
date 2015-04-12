@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +18,8 @@ import com.ariesmcrae.guitarmakers.model.Location;
 @SpringApplicationConfiguration(classes = Application.class)
 public class LocationPersistenceTests {
 	@Autowired
-	private LocationRepository locationRepository;
+	private LocationRepository repo;
 
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Test
 	@Transactional
@@ -32,30 +27,26 @@ public class LocationPersistenceTests {
 		Location location = new Location();
 		location.setCountry("Canada");
 		location.setState("British Columbia");
-		location = locationRepository.create(location);
+		location = repo.saveAndFlush(location);
 		
-		// clear the persistence context so we don't return the previously cached location object
-		// this is a test only thing and normally doesn't need to be done in prod code
-		entityManager.clear();
-
-		Location otherLocation = locationRepository.find(location.getId());
+		Location otherLocation = repo.findOne(location.getId());
 		assertEquals("Canada", otherLocation.getCountry());
 		assertEquals("British Columbia", otherLocation.getState());
 		
 		//delete BC location now
-		locationRepository.delete(otherLocation);
+		repo.delete(otherLocation);
 	}
 
 	@Test
 	public void testFindWithLike() throws Exception {
-		List<Location> locs = locationRepository.getLocationByStateName("New");
+		List<Location> locs = repo.findByStateLike("New%");
 		assertEquals(4, locs.size());
 	}
 
 	@Test
 	@Transactional  //note this is needed because we will get a lazy load exception unless we are in a tx
 	public void testFindWithChildren() throws Exception {
-		Location arizona = locationRepository.find(3L);
+		Location arizona = repo.findOne(3L);
 		assertEquals("United States", arizona.getCountry());
 		assertEquals("Arizona", arizona.getState());
 		

@@ -29,13 +29,13 @@ public class ModelTypePersistenceTests {
 	public void testSaveAndGetAndDelete() throws Exception {
 		ModelType mt = new ModelType();
 		mt.setName("Test Model Type");
-		mt = modelTypeRepository.create(mt);
+		mt = modelTypeRepository.save(mt);
 		
 		// clear the persistence context so we don't return the previously cached location object
 		// this is a test only thing and normally doesn't need to be done in prod code
 		entityManager.clear();
 
-		ModelType otherModelType = modelTypeRepository.find(mt.getId());
+		ModelType otherModelType = modelTypeRepository.findOne(mt.getId());
 		assertEquals("Test Model Type", otherModelType.getName());
 		
 		modelTypeRepository.delete(otherModelType);
@@ -43,7 +43,7 @@ public class ModelTypePersistenceTests {
 
 	@Test
 	public void testFind() throws Exception {
-		ModelType mt = modelTypeRepository.find(1L);
+		ModelType mt = modelTypeRepository.findOne(1L);
 		assertEquals("Dreadnought Acoustic", mt.getName());
 	}
 }
