@@ -1,6 +1,7 @@
 package com.ariesmcrae.guitarmakers.repo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -53,5 +54,20 @@ public class LocationPersistenceTests {
 		assertEquals(1, arizona.getManufacturers().size());
 		
 		assertEquals("Fender Musical Instruments Corporation", arizona.getManufacturers().get(0).getName());
+	}
+	
+	
+	@Test
+	public void testJpaAnd() {
+		List<Location> locations = repo.findByCountryAndState("United States", "Utah");
+		assertTrue(locations != null && locations.size() == 1);
+		assertEquals("Utah", locations.iterator().next().getState());
+	}
+	
+	
+	@Test
+	public void testJpaOr() {
+		List<Location> locations = repo.findByCountryOrState("Vermont", "Texas");
+		assertTrue(locations != null && locations.size() == 1);
 	}
 }
