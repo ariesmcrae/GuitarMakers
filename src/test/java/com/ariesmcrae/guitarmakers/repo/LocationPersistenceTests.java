@@ -2,6 +2,7 @@ package com.ariesmcrae.guitarmakers.repo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -58,16 +59,60 @@ public class LocationPersistenceTests {
 	
 	
 	@Test
-	public void testJpaAnd() {
+	public void testAnd() {
 		List<Location> locations = repo.findByCountryAndState("United States", "Utah");
-		assertTrue(locations != null && locations.size() == 1);
+		assertTrue(locations != null);
+		assertEquals(1, locations.size());
 		assertEquals("Utah", locations.iterator().next().getState());
 	}
 	
 	
 	@Test
-	public void testJpaOr() {
+	public void testOr() {
 		List<Location> locations = repo.findByCountryOrState("Vermont", "Texas");
-		assertTrue(locations != null && locations.size() == 1);
+		assertTrue(locations != null);
+		assertEquals(1, locations.size());		
 	}
+	
+	
+	@Test
+	public void testIs() {
+		Location location = repo.findByStateIs("California");
+		assertNotNull(location);
+		assertEquals("California", location.getState());
+	}
+	
+	
+	@Test
+	public void testEquals() {
+		Location location = repo.findByStateEquals("Alaska");
+		assertNotNull(location);
+		assertEquals("Alaska", location.getState());		
+	}
+	
+	
+	@Test
+	public void testNot() {
+		List<Location> locations = repo.findByStateNot("Wisconsin");
+		assertTrue(locations != null);
+		assertEquals(49, locations.size());
+	}
+	
+	
+	@Test
+	public void testIsOrEquals() {
+		Location location = repo.findByCountryIsOrStateEquals("Australia", "Florida");
+		assertNotNull(location);
+		assertEquals("Florida", location.getState());	
+	
+	}
+	
+	
+	
+	@Test
+	public void testNotLike() {
+		List<Location> locations = repo.findByStateNotLike("Misso%");
+		assertEquals(49, locations.size());		
+	}
+	
 }
